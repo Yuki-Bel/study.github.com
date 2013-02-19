@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.util.Log;
 import android.view.Menu;
 
+//ゲームのアーキテクト部分
 public class Game extends Activity {
 
 	private static final String TAG = "Sudoku";
