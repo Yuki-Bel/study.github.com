@@ -85,8 +85,11 @@ public class MainActivity extends Activity implements OnClickListener {
 	}
 
 	/* 指定された難易度レベルで新しいゲームを開始する　 */
-	private void startGame(int i) {
-		Log.d(TAG, "clicke on " + i);
+	private void startGame(int Level) {
+		Log.d(TAG, "clicke on " + Level);		
+		Intent intent = new Intent(MainActivity.this, Game.class);
+		intent.putExtra(Game.KEY_DIFFICULTY, Level);
+		startActivity(intent);
 		// start geme here
 	}
 }

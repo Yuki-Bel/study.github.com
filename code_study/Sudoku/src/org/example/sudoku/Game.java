@@ -17,7 +17,7 @@ public class Game extends Activity {
 
 	private int puzzle[] = new int[9 * 9];
 
-	// private PuzzleView puzzleView;
+	private PuzzleView puzzleView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,9 +28,9 @@ public class Game extends Activity {
 		// puzzle = getPuzzle(diff);
 		// calculateUsedTiles();
 
-		// puzzleView = newpuzzleView;
-		// setContentView(puzzleView);
-		// puzzleView.requestFocus}();
+		 puzzleView = new PuzzleView(this);
+		 setContentView(puzzleView);
+		 puzzleView.requestFocus();
 	}
 	// ...
 }
