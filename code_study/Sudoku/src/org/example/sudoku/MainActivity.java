@@ -88,6 +88,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	private void startGame(int Level) {
 		Log.d(TAG, "clicke on " + Level);		
 		Intent intent = new Intent(MainActivity.this, Game.class);
+		//intentと供に情報引き渡し(putExtra)=intent間引数の役割
 		intent.putExtra(Game.KEY_DIFFICULTY, Level);
 		startActivity(intent);
 		// start geme here
