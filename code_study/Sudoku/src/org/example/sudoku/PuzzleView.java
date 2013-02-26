@@ -7,6 +7,7 @@ import android.graphics.Paint.FontMetrics;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 
 public class PuzzleView extends View {
@@ -37,7 +38,41 @@ public class PuzzleView extends View {
 		// super = 継承もとクラス(メソッド)の宣言処理
 		super.onSizeChanged(w, h, oldw, oldh);
 	}
+	
+	//選択キーを移動させる（フォーカス）
+	//onKeyDownオーバライドよりキー入力のイベント動作処理
+	@Override
+	public boolean onKeyDown(int keyCode,KeyEvent event){
+		switch(keyCode){		
+		case KeyEvent.KEYCODE_DPAD_UP:
+			select(selX,selY-1);
+			break;
+		case KeyEvent.KEYCODE_DPAD_DOWN:
+			select(selX,selY+1);
+			break;
+		case KeyEvent.KEYCODE_DPAD_LEFT:
+			select(selX-1,selY);
+			break;
+		case KeyEvent.KEYCODE_DPAD_RIGHT:
+			select(selX+1,selY);
+			break;
+			default:
+				return super.onKeyDown(keyCode, event);
+		}
+		return true;
+	}
 
+	//セルのフォーカス領域計算
+	private void select(int x,int y){
+		invalidate(selRect);
+		selX = Math.min(Math.max(x, 0), 8);
+		selY = Math.min(Math.max(x, 0), 8);	
+		getRect(selX,selY,selRect);		
+	}
+	private void getRect(int x, int y ,Rect rect){
+		rect.set((int)(x*width), (int)(y*height), (int)(x*width+width), (int)(y*height+height));		
+	}
+	
 	@Override
 	protected void onDraw(Canvas canvas) {
 		// 背景を描画する
@@ -88,12 +123,19 @@ public class PuzzleView extends View {
 		float y = height / 2 -(fm.ascent + fm.descent) / 2;
 		for(int i = 0; i<9 ; i++){
 			for(int j = 0; j<9 ; j++){
-			//canvas.drawText(this.game.getTileString(i,j), i*width+x
-				//	,j * height + y, foreground);
+				//数値を盤に格納
+		//	canvas.drawText(this.game.getTileString(i,j), i*width+x
+		//			,j * height + y, foreground);
+		//			canvas.drawText("N", i*width+x
+		//					,j * height + y, foreground);
 		}
 		
 		// ヒントを描画する
 		// 選択されたマスを描画する
+			Log.d(TAG,"selRect=" + selRect);
+			Paint selected = new Paint();
+			selected.setColor(getResources().getColor(R.color.puzzle_selected));
+			canvas.drawRect(selRect, selected);
 	}
 	}
 
