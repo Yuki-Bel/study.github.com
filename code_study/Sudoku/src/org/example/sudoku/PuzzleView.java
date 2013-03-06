@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 
 public class PuzzleView extends View {
 	private static final String TAG = "Sudoku";
@@ -20,7 +21,7 @@ public class PuzzleView extends View {
 	private float height;// マスの縦の長さ
 	private int selX;// 選択されたマスのX軸のインデックス
 	private int selY;// 選択されたマスのY軸のインデックス
-	private final Rect selRect = new Rect();
+	private final Rect selRect = new Rect(); //選択された矩形を表す[ex]Rectは矩形描画クラス
 
 	// コンストラクタよりゲームクラスの参照を保存(context)し、フォーカス(入力場)を設定
 	public PuzzleView(Context context) {
@@ -125,12 +126,13 @@ public class PuzzleView extends View {
 	
 	//マスの数字を変更
 	public void setSelectedTile(int tile){
-		//if(game.setTileIfValid(selX,selY,tile)){
+		if(game.setTileIfValid(selX,selY,tile)){
 		invalidate();	
-		//}else{
+		}else{
 			//このマスの数値は選べない場合
-		//	Log.d(TAG, "setSelectedTile: invalid: "+ tile);
-		//}
+			Log.d(TAG, "setSelectedTile: invalid: "+ tile);
+		startAnimation(AnimationUtils.loadAnimation(game, R.anim.shake));
+		}
 	}
 	
 	@Override
@@ -184,19 +186,36 @@ public class PuzzleView extends View {
 		for(int i = 0; i<9 ; i++){
 			for(int j = 0; j<9 ; j++){
 				//数値を盤に格納
-		//	canvas.drawText(this.game.getTileString(i,j), i*width+x
-		//			,j * height + y, foreground);
-		//			canvas.drawText("N", i*width+x
-		//					,j * height + y, foreground);
+			canvas.drawText(this.game.getTileString(i,j), i*width+x
+					,j * height + y, foreground);
+			}
 		}
 		
 		// ヒントを描画する
+		//残された手の数に基づいてヒントの色を塗る
+			Paint hint = new Paint();
+			//c(カラー)配列の宣言  [ex]型x[] = {../..};
+			int c[] = {getResources().getColor(R.color.puzzle_hint_0),
+					getResources().getColor(R.color.puzzle_hint_1),
+					getResources().getColor(R.color.puzzle_hint_2),};
+			Rect r =new Rect();
+			for(int i = 0;i < 9 ;i++){
+				for(int j = 0;j < 9 ;j++){
+				int movesleft = 9 - game.getUsedTiles(i,j).length;
+					if (movesleft < c.length){
+						getRect(i,j,r);
+						hint.setColor(c[movesleft]);
+						canvas.drawRect(r, hint);
+					}
+				}							
+			}
+			
 		// 選択されたマスを描画する
 			Log.d(TAG,"selRect=" + selRect);
 			Paint selected = new Paint();
 			selected.setColor(getResources().getColor(R.color.puzzle_selected));
 			canvas.drawRect(selRect, selected);
-	}
+	
 	}
 
 }
