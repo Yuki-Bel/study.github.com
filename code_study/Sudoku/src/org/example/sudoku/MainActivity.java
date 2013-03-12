@@ -31,8 +31,20 @@ public class MainActivity extends Activity implements OnClickListener {
 		exitButton.setOnClickListener((OnClickListener) this);
 	}
 
+	@Override
+	protected void onResume(){
+		super.onResume();
+		Music.play(this,R.raw.main);
+	}
+	
+	@Override
+	protected void onPause(){
+		super.onPause();
+		Music.stop(this);
+	}
+	
 	// onClick定義　タップ時の反応＝intent（Activity）呼び出し
-	// @Override
+	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.new_button:
@@ -86,9 +98,9 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	/* 指定された難易度レベルで新しいゲームを開始する　 */
 	private void startGame(int Level) {
-		Log.d(TAG, "clicke on " + Level);		
+		Log.d(TAG, "clicke on " + Level);
 		Intent intent = new Intent(MainActivity.this, Game.class);
-		//intentと供に情報引き渡し(putExtra)=intent間引数の役割
+		// intentと供に情報引き渡し(putExtra)=intent間引数の役割
 		intent.putExtra(Game.KEY_DIFFICULTY, Level);
 		startActivity(intent);
 		// start geme here

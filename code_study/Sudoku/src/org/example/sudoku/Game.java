@@ -48,6 +48,19 @@ public class Game extends Activity {
 		 setContentView(puzzleView);
 		 puzzleView.requestFocus();
 	}
+	
+	@Override
+	protected void onResume(){
+		super.onResume();
+		Music.play(this,R.raw.game);
+	}
+	
+	@Override
+	protected void onPause(){
+		super.onPause();
+		Music.stop(this);
+	}
+	
 	/**盤面の初期状態の設定 */
 	private int[] getPuzzle(int diff){
 		String puz;
