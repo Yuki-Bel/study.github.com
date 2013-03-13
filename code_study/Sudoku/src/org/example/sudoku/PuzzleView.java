@@ -6,6 +6,8 @@ import android.graphics.Paint;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -23,12 +25,42 @@ public class PuzzleView extends View {
 	private int selY;// 選択されたマスのY軸のインデックス
 	private final Rect selRect = new Rect(); // 選択された矩形を表す[ex]Rectは矩形描画クラス
 
+	private static final String SELX ="selX";
+	private static final String SELY ="selY";
+	private static final String VIEW_STAGE = "viewState";
+	private static final int ID = 42;
+	
 	// コンストラクタよりゲームクラスの参照を保存(context)し、フォーカス(入力場)を設定
 	public PuzzleView(Context context) {
 		super(context);
 		this.game = (Game) context;
 		setFocusable(true);
 		setFocusableInTouchMode(true);
+		setId(ID);
+	}
+	
+	//onPauseやonStop時に呼ばれる。bandleクラスにキーと状態を格納
+	@Override
+	protected Parcelable onSaveInstanceState(){
+		//状態取得のため、super呼び出し(ないとランタイムエラー)
+		Parcelable p = super.onSaveInstanceState();
+		Log.d(TAG, "onSaveInstanceState");
+		Bundle bundle = new Bundle();
+		bundle.putInt(SELX, selX);
+		bundle.putInt(SELY,selY);
+		bundle.putParcelable(VIEW_STAGE, p);		
+		return bundle;
+	}
+	
+	//onSaveInstaceStateで格納したbundleを読み込む
+	@Override	
+	protected void onRestoreInstanceState(Parcelable state) {
+		Log.d(TAG, "onRestoreInstanceState");
+		Bundle bundle = (Bundle) state;
+		select(bundle.getInt(SELX),bundle.getInt(SELY));
+		super.onRestoreInstanceState(bundle.getParcelable(VIEW_STAGE));
+		
+		return;		
 	}
 
 	@Override

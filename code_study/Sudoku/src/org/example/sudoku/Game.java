@@ -8,10 +8,9 @@ import org.example.sudoku.*;
 
 //ゲームのアーキテクト部分
 public class Game extends Activity {
-
 	private static final String TAG = "Sudoku";
-
-	public static final String KEY_DIFFICULTY = "difficulty";
+	private static final String PREF_PUZZLE = "puzzle";
+	public static final String KEY_DIFFICULTY = "difficulty";	
 	public static final int DIFFICULTY_EASY = 0;
 	public static final int DIFFICULTY_MEDIUM = 1;
 	public static final int DIFFICULTY_HARD = 2;
@@ -28,6 +27,8 @@ public class Game extends Activity {
 	"009000000080605020591078000"+
 	"000000700706040102004000000"+
 	"000720903090301080000000600";
+	
+	protected static final int DIFFICULTY_CONTINUE = -1;
 
 	private int puzzle[] = new int[9 * 9];
 	/** 使用済みの数のキャッシュ **/
@@ -47,6 +48,9 @@ public class Game extends Activity {
 		 puzzleView = new PuzzleView(this);
 		 setContentView(puzzleView);
 		 puzzleView.requestFocus();
+		 
+		 //アクティビティ再起動時にゲームを続行する。
+		 getIntent().putExtra(KEY_DIFFICULTY, DIFFICULTY_CONTINUE);
 	}
 	
 	@Override
@@ -58,25 +62,37 @@ public class Game extends Activity {
 	@Override
 	protected void onPause(){
 		super.onPause();
+		Log.d(TAG,"onPause");
 		Music.stop(this);
+		
+		//現在のパズルをString配列で保存する
+		getPreferences(MODE_PRIVATE).edit().putString(PREF_PUZZLE,
+				toPuzzleString(puzzle)).commit();
 	}
 	
 	/**盤面の初期状態の設定 */
 	private int[] getPuzzle(int diff){
-		String puz;
-		//TODO: 前回のゲームの続行は未対応
+		String puz;		
 		switch(diff){
+		
+		case DIFFICULTY_CONTINUE:
+			puz = getPreferences(MODE_PRIVATE).getString(PREF_PUZZLE, easyPuzzle);
+			break;
+			
 		case DIFFICULTY_HARD:
 			puz = hardPuzzle;
 			break;
+			
 		case DIFFICULTY_MEDIUM:
 			puz = mediumPuzzle;
 			break;
+			
 		case DIFFICULTY_EASY:
 		default:
 			puz = easyPuzzle;
 			break;
 		}
+		
 		return fromPuzzleString(puz);
 	}
 	
